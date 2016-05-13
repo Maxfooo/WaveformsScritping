@@ -11,9 +11,12 @@ function main() {
    var filePath = "C:/Users/maxr/Desktop/WaveformWorkspace/";
    var fileName = "measureDAC"
    var totalTestFile = File(filePath+fileName+".csv");
+   var averageTestFile = File(filePath+fileName+"_Averages"+".csv");
    var stepFileName = "Step_";
    var stepTestFile = File(filePath+stepFileName+stepVal+".csv");
-   
+   var average = 0;
+
+
 	if(!('Patterns1' in this) && !('Scope1' in this)) 
 	{
 		throw("Please open Patterns and Scope instrument");
@@ -21,11 +24,16 @@ function main() {
 
    Patterns1.Channels.Bus1.Number.value = stepVal;
    Patterns1.run();
-   Scope1.run();
    for(stepVal; stepVal < maxVal; stepVal++)
    {
+    Scope1.single();
+   Scope1.wait();
      Patterns1.Channels.Bus1.Number.value = stepVal;
-	  totalTestFile.appendLine(ch.data);
+      var data = ch.data;
+	  totalTestFile.appendLine(data);
+    data.forEach(function(sample){average += sample})
+    average /= data.length;
+   averageTestFile.appendLine(average);
 	  //stepTestFile.write(ch.data);
 	  //stepTestFile = File(filePath+stepFileName+stepVal+".csv");
    }
