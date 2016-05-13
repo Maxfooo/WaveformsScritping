@@ -1,24 +1,45 @@
-// https://reference.digilentinc.com/waveforms3/refmanual#code
+// https://reference.digilentinc.com/waveforms3/refmanual#codeTool
+
+
 
 function main() {
-	if(!('Wavegen1' in this) || !('Patterns1' in this) || !('Scope1' in this)) 
+   var maxVal = power(2, 12);
+   var stepVal = 0;
+   var numOfSamples = 5;
+   var sample = 0;
+   ch = Scope1.Channel1;
+   var filePath = "C:/Users/maxr/Desktop/WaveformWorkspace/";
+   var fileName = "measureDAC"
+   var totalTestFile = File(filePath+fileName+".csv");
+   var stepFileName = "Step_";
+   var stepTestFile = File(filePath+stepFileName+stepVal+".csv");
+   
+	if(!('Patterns1' in this) && !('Scope1' in this)) 
 	{
-		throw("Please open Wavegen and Patterns instrument");
+		throw("Please open Patterns and Scope instrument");
 	}
-   Wavegen1.Channel1.Simple.Type.text = 'Sine';
-   Wavegen1.Channel1.Simple.Frequency.value = 5000;
-   Wavegen1.Channel1.Simple.Amplitude.value = 3.3;
-   Wavegen1.Channel1.Simple.Offset.value = 1.65;
-   
-   Wavegen1.run()
-   for(var idx = 0; wait(1) && idx < 10; idx++)
+
+   Patterns1.Channels.Bus1.Number.value = stepVal;
+   Patterns1.run();
+   Scope1.run();
+   for(stepVal; stepVal < maxVal; stepVal++)
    {
-      Scope1.single();
-      var data = Scope1.Channel1.data;
-      data = data / 3.3 * 4095;
-      data.toString(2);
-      print(data);
+     Patterns1.Channels.Bus1.Number.value = stepVal;
+	  totalTestFile.appendLine(ch.data);
+	  //stepTestFile.write(ch.data);
+	  //stepTestFile = File(filePath+stepFileName+stepVal+".csv");
    }
-   
+   Patterns1.stop();
+   Scope1.stop();
 }
+
+function power(base, raise) {
+   var result = base;
+   for(var i = 0; i < (raise - 1); i++)
+   {
+      result *= base;
+   }
+   return result;
+}
+
 main();
