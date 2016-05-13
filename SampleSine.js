@@ -30,7 +30,7 @@ function main() {
    Scope1.wait();
      Patterns1.Channels.Bus1.Number.value = stepVal;
       var data = ch.data;
-	  totalTestFile.appendLine(data);
+	  //totalTestFile.appendLine(data);
     data.forEach(function(sample){average += sample})
     average /= data.length;
    averageTestFile.appendLine(average);
